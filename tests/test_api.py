@@ -1,8 +1,5 @@
-# tests/test_api.py
 from fastapi.testclient import TestClient
 from src.api.app import app
-
-client = TestClient(app)
 
 def test_predict():
     payload = {
@@ -20,10 +17,13 @@ def test_predict():
         "ca": 0,
         "thal": 1
     }
-    response = client.post("/predict", json=payload)
-    assert response.status_code == 200
-    data = response.json()
-    assert "prediction" in data
-    assert "confidence" in data
-    assert 0 <= data["confidence"] <= 1
-    assert data["prediction"] in [0, 1]
+
+    # Use context manager to trigger lifespan (loads model)
+    with TestClient(app) as client:
+        response = client.post("/predict", json=payload)
+        assert response.status_code == 200
+        data = response.json()
+        assert "prediction" in data
+        assert "confidence" in data
+        assert 0 <= data["confidence"] <= 1
+        assert data["prediction"] in [0, 1]
