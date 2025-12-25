@@ -43,7 +43,7 @@ jobs:
 
       # Step 8: Run pytest
       - name: Run unit tests
-        run: pytest tests/ --maxfail=1 --disable-warnings -v  
+        run: PYTHONPATH=. pytest tests/ --maxfail=1 --disable-warnings -v
 
       # Step 9: Cleanup
       - name: Cleanup
