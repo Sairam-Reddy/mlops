@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  heart-disease:
+    build: .
+    container_name: heart-disease
+    ports:
+      - "8000:8000"  # FastAPI
+      - "5000:5000"  # MLflow UI
+    volumes:
+      - ./mlruns:/app/mlruns
+      - ./mlflow.db:/app/mlflow.db
+    environment:
+      MLFLOW_TRACKING_URI: sqlite:///mlflow.db

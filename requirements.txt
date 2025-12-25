@@ -1,0 +1,11 @@
+numpy
+pandas
+scikit-learn
+mlflow
+fastapi
+uvicorn
+pytest
+matplotlib
+seaborn
+prometheus-client
+httpx
