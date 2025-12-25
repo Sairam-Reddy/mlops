@@ -17,17 +17,13 @@ jobs:
 
       # Step 3: Install dependencies for tests
       - name: Install Python dependencies
-        run: pip install -r requirements.txt pytest requests
+        run: pip install -r requirements.txt pytest requests      
 
-      # Step 4: Run pytest
-      - name: Run unit tests
-        run: PYTHONPATH=$PWD pytest tests/ --maxfail=1 --disable-warnings -v
-
-      # Step 5: Build Docker image
+      # Step 4: Build Docker image
       - name: Build Docker image
         run: docker build -t heart-disease-app .
 
-      # Step 6: Run container in detached mode
+      # Step 5: Run container in detached mode
       - name: Run container
         run: |
           docker run -d \
@@ -37,13 +33,17 @@ jobs:
             -e MLFLOW_TRACKING_URI=sqlite:///mlflow.db \
             heart-disease-app
 
-      # Step 7: Wait for services to start
+      # Step 6: Wait for services to start
       - name: Wait for startup
         run: sleep 30  # adjust if needed
 
-      # Step 8: Test API inside container
+      # Step 7: Test API inside container
       - name: Test API
         run: docker exec heart-disease-test python /app/test_request.py
+
+      # Step 8: Run pytest
+      - name: Run unit tests
+        run: PYTHONPATH=$PWD pytest tests/ --maxfail=1 --disable-warnings -v  
 
       # Step 9: Cleanup
       - name: Cleanup
