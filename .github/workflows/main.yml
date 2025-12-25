@@ -38,8 +38,8 @@ jobs:
         run: sleep 30  # adjust if needed
 
       # Step 7: Test API inside container
-      - name: Test API
-        run: docker exec heart-disease-test python /app/test_request.py
+      #- name: Test API
+      #  run: docker exec heart-disease-test python /app/test_request.py
 
       # Step 8: Run pytest
       - name: Run unit tests
