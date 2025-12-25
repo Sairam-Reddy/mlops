@@ -1,0 +1,52 @@
+name: CI Docker
+
+on: [push]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - uses: actions/checkout@v3
+
+      # Step 2: Set up Python (for pytest)
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      # Step 3: Install dependencies for tests
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt pytest requests
+
+      # Step 4: Run pytest
+      - name: Run unit tests
+        run: pytest tests/ --maxfail=1 --disable-warnings -v
+
+      # Step 5: Build Docker image
+      - name: Build Docker image
+        run: docker build -t heart-disease-app .
+
+      # Step 6: Run container in detached mode
+      - name: Run container
+        run: |
+          docker run -d \
+            --name heart-disease-test \
+            -v ${{ github.workspace }}/mlruns:/app/mlruns \
+            -v ${{ github.workspace }}/mlflow.db:/app/mlflow.db \
+            -e MLFLOW_TRACKING_URI=sqlite:///mlflow.db \
+            heart-disease-app
+
+      # Step 7: Wait for services to start
+      - name: Wait for startup
+        run: sleep 30  # adjust if needed
+
+      # Step 8: Test API inside container
+      - name: Test API
+        run: docker exec heart-disease-test python /app/test_request.py
+
+      # Step 9: Cleanup
+      - name: Cleanup
+        run: |
+          docker stop heart-disease-test
+          docker rm heart-disease-test
