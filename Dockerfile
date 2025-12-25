@@ -9,6 +9,7 @@ COPY src/ src/
 COPY scripts/ scripts/
 COPY entrypoint.sh .
 COPY test_request.py .
+COPY tests/ tests/
 
 # Make entrypoint executable
 RUN chmod +x entrypoint.sh
@@ -17,5 +18,6 @@ EXPOSE 8000
 EXPOSE 5000
 
 ENTRYPOINT ["./entrypoint.sh"]
+
 
 
